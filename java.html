@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Library Management System</h1>
+    <div id="menu">
+        <button onclick="showAddBook()">Add Book</button>
+        <button onclick="showViewBooks()">View Books</button>
+        <button onclick="showBorrowBook()">Borrow Book</button>
+        <button onclick="showReturnBook()">Return Book</button>
+    </div>
+    <div id="content">
+        <h2>Welcome To Library</h2>
+    </div>
+    <script>
+        let books = [];
+
+        function showAddBook() {
+            document.getElementById('content').innerHTML = `
+                <h2>Add Book</h2>
+                <form id="addBookForm" onsubmit="addBook(event)">
+                    <label>Title:</label>
+                    <input type="text" id="title" required><br><br>
+                    <label>Author:</label>
+                    <input type="text" id="author" required><br><br>
+                    <button type="submit">Add Book</button>
+                </form>
+            `;
+        }
+
+        function addBook(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const book = { title, author, isAvailable: true };
+            books.push(book);
+            alert(`Book added: ${title} by ${author}`);
+            showViewBooks();
+        }
+
+        function showViewBooks() {
+            const bookList = books.map(book => `
+                <li>
+                    ${book.title} by ${book.author} - ${book.isAvailable ? 'Available' : 'Not Available'}
+                </li>
+            `).join('');
+            document.getElementById('content').innerHTML = `
+                <h2>View Books</h2>
+                <ul>${bookList}</ul>
+            `;
+        }
+
+        function showBorrowBook() {
+            document.getElementById('content').innerHTML = `
+                <h2>Borrow Book</h2>
+                <form id="borrowBookForm" onsubmit="borrowBook(event)">
+                    <label>Title:</label>
+                    <input type="text" id="borrowTitle" required><br><br>
+                    <button type="submit">Borrow Book</button>
+                </form>
+            `;
+        }
+
+        function borrowBook(event) {
+            event.preventDefault();
+            const title = document.getElementById('borrowTitle').value;
+            const book = books.find(book => book.title.toLowerCase() === title.toLowerCase());
+            if (book) {
+                if (book.isAvailable) {
+                    book.isAvailable = false;
+                    alert(`You have borrowed: ${book.title}`);
+                } else {
+                    alert('Sorry, the book is already borrowed.');
+                }
+            } else {
+                alert('Book not found.');
+            }
+            showViewBooks();
+        }
+
+        function showReturnBook() {
+            document.getElementById('content').innerHTML = `
+                <h2>Return Book</h2>
+                <form id="returnBookForm" onsubmit="returnBook(event)">
+                    <label>Title:</label>
+                    <input type="text" id="returnTitle" required><br><br>
+                    <button type="submit">Return Book</button>
+                </form>
+            `;
+        }
+
+        function returnBook(event) {
+            event.preventDefault();
+            const title = document.getElementById('returnTitle').value;
+            const book = books.find(book => book.title.toLowerCase() === title.toLowerCase());
+            if (book) {
+                if (!book.isAvailable) {
+                    book.isAvailable = true;
+                    alert(`You have returned: ${book.title}`);
+                } else {
+                    alert('This book was not borrowed.');
+                }
+            } else {
+                alert('Book not found.');
+            }
+            showViewBooks();
+        }
+    </script>
+</body>
+</html>
